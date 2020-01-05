@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class Eagle {
@@ -20,6 +21,8 @@ public class Eagle {
     //Lift
     private DcMotor motorLift;
 
+    //Servos
+    private Servo servoArmLeft;
 
     private HardwareMap hwMap;
 
