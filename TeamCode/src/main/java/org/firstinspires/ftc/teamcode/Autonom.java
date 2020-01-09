@@ -5,10 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaSkyStone;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.TfodSkyStone;
 
 import java.util.List;
@@ -19,45 +23,36 @@ public class Autonom extends LinearOpMode {
 
     private Eagle eagle = new Eagle();
 
-    private VuforiaSkyStone vuforiaSkyStone;
-    private TfodSkyStone tfodSkyStone;
+    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Stone";
+    private static final String LABEL_SECOND_ELEMENT = "Skystone";
+
+    private static final String VUFORIA_KEY =
+            "Aaaehpz/////AAABmQe94sn1BEXXs4h6LleDQVpPr0LBiNWsZOi8Ttm5s7saUDJ2rtO+exhVvNUTvMRXFdiHA6yjUXvRi9YUnj+8xLWXnGUJsLWdJAew7b63OOpzhlcbhzYfAujCjx4+K3GpIV2aqH3ROTQxzorjqti8Q47zhuW75aMwYYHPeqjBMpp4RO+R7z/OXuy0QmQmT1xCsOdGVUC6T5OSOChfK7OjhDL7+Ud707Uwqc/8WcLEX1PQaRsnf2nI49jENHNPfFqLg7oSMZ6fGUiIQbWKFbZEbKBjI13gkIU0VSSKi2WrspIgtg6Nm4Tau5qtzA0LhAXwS0ucFuB1PSP9VZGudONxyHGy8e/Yqy1YtmHjEvDITJWg";
+
+    private VuforiaLocalizer vuforia;
+    private TFObjectDetector tfod;
 
 
     @Override
     public void runOpMode() {
-//        LeftMotor = hardwareMap.dcMotor.get("LeftMotor");
-//        UpperServo = hardwareMap.servo.get("UpperServo");
-//        LowerServo = hardwareMap.servo.get("LowerServo");
-        vuforiaSkyStone = new VuforiaSkyStone();
-        tfodSkyStone = new TfodSkyStone();
-
-//        RightMotor = hardwareMap.dcMotor.get("RightMotor");
 
         // Initialization
         telemetry.addData("Init ", "started");
         telemetry.update();
-//        LeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-//        UpperServo.setPosition(1);
-//        LowerServo.setPosition(0);
-        // Init Vuforia because Tensor Flow needs it.
-        vuforiaSkyStone.initialize(
-                "", // vuforiaLicenseKey
-                VuforiaLocalizer.CameraDirection.BACK, // cameraDirection
-                false, // useExtendedTracking
-                true, // enableCameraMonitoring
-                VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES, // cameraMonitorFeedback
-                0, // dx
-                0, // dy
-                0, // dz
-                0, // xAngle
-                0, // yAngle
-                0, // zAngle
-                false); // useCompetitionFieldTargetLocations
-        telemetry.addData("Vuforia", "initialized");
+
+        initVuforia();
+        initTfod();
+
+        telemetry.addData("Vuforia & Tfod", "initialized");
         telemetry.update();
-        // Let's use 70% minimum confidence and
-        // and no object tracker.
-        tfodSkyStone.initialize(vuforiaSkyStone, 0.7F, false, true);
+
+        eagle.init(hardwareMap);
+
+        telemetry.addData("Robot", "initialized");
+        telemetry.update();
+
+        tfod.activate();
 
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
@@ -65,13 +60,14 @@ public class Autonom extends LinearOpMode {
         // height value corresponding to the length
         // of the robot's neck.
         double TargetHeightRatio = 0.8;
+
         waitForStart();
-        tfodSkyStone.activate();
+
         // We'll loop until gold block captured or time is up
         boolean SkystoneFound = false;
         while (opModeIsActive() && !SkystoneFound) {
             // Get list of current recognitions.
-            List<Recognition> recognitions = tfodSkyStone.getRecognitions();
+            List<Recognition> recognitions = tfod.getRecognitions();
             // Report number of recognitions.
             telemetry.addData("Objects Recognized", recognitions.size());
             // If some objects detected...
@@ -79,7 +75,6 @@ public class Autonom extends LinearOpMode {
                 // ...let's count how many are gold.
                 int SkystoneCount = 0;
                 // Step through the stones detected.
-                // TODO: Enter the type for variable named recognition
                 for (Recognition recognition : recognitions) {
                     if (recognition.getLabel().equals("Skystone")) {
                         // A Skystone has been detected.
@@ -190,14 +185,39 @@ public class Autonom extends LinearOpMode {
             }
             telemetry.update();
         }
+
         // Skystone found, time is up or stop was requested.
-        tfodSkyStone.deactivate();
-//        LeftMotor.setPower(0);
-//        RightMotor.setPower(0);
+        tfod.shutdown();
         // Pause to let driver station to see last telemetry.
         sleep(2000);
 
-        vuforiaSkyStone.close();
-        tfodSkyStone.close();
     }
+
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minimumConfidence = 0.7;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
 }
