@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Autonom extends LinearOpMode {
 
-    private Eagle eagle;
+    private Eagle eagle = new Eagle();
 
     private VuforiaSkyStone vuforiaSkyStone;
     private TfodSkyStone tfodSkyStone;
@@ -30,7 +30,7 @@ public class Autonom extends LinearOpMode {
 //        LowerServo = hardwareMap.servo.get("LowerServo");
         vuforiaSkyStone = new VuforiaSkyStone();
         tfodSkyStone = new TfodSkyStone();
-        eagle = new Eagle(hardwareMap);
+
 //        RightMotor = hardwareMap.dcMotor.get("RightMotor");
 
         // Initialization

@@ -31,13 +31,16 @@ public class Eagle {
     private static final int MOTOR_TICK_COUNTS = 1120;
 
     //Constructor
-    public Eagle(HardwareMap hardwareMap) {
-        this.hwMap = hardwareMap;
+    public Eagle() {
+
     }
 
 
-    public void init() {
+    public void init(HardwareMap hardwareMap) {
         //Initialize
+
+        hwMap = hardwareMap;
+
         leftFrontDrive  = hwMap.get(DcMotor.class, "leftFrontDrive");
         leftBackDrive   = hwMap.get(DcMotor.class, "leftBackDrive");
         rightFrontDrive = hwMap.get(DcMotor.class, "rightFrontDrive");
@@ -49,12 +52,12 @@ public class Eagle {
         motorLift       = hwMap.get(DcMotor.class, "motorLift");
 
         //Set Direction
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         motorLift.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -91,6 +94,31 @@ public class Eagle {
         rightBackDrive.setPower(v4);
 
     }
+
+    public void moveLift(boolean power1, boolean power2) {
+        if(power1) {
+            motorLift.setPower(0.5);
+        } else if(power2) {
+            motorLift.setPower(-0.5);
+        } else {
+            motorLift.setPower(0.0);
+        }
+    }
+
+    public void intake(boolean power1, boolean power2) {
+        if(power1) {
+            intakeRight.setPower(0.75);
+            intakeLeft.setPower(0.75);
+        } else if(power2) {
+            intakeRight.setPower(-0.75);
+            intakeLeft.setPower(-0.75);
+        } else {
+            intakeRight.setPower(0);
+            intakeLeft.setPower(0);
+        }
+    }
+
+    //Functii autonom
 
     public void move(double distance) {
         //Set Mode
