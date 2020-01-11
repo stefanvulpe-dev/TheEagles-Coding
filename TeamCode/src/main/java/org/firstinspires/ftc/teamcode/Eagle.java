@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaSkyStone;
 
@@ -24,11 +25,18 @@ public class Eagle {
     private DcMotor motorLift;
 
     //Servos
-    private Servo servoArmLeft;
+    private Servo servoLeft;
+    private Servo servoRight;
+    private Servo servoClaw;
 
     private HardwareMap hwMap;
 
     private static final int MOTOR_TICK_COUNTS = 1120;
+    private static final double ARM_MAX_RANGE = 1.0d;
+    private static final double ARM_MIN_RANGE = 0.0d;
+    private static final double ARM_HOME = 0.0d;
+    private static final double ARM_SPEED = 0.005;
+    private double servoPosition = ARM_HOME;
 
     //Constructor
     public Eagle() {
@@ -51,6 +59,11 @@ public class Eagle {
 
         motorLift       = hwMap.get(DcMotor.class, "motorLift");
 
+        //Servo
+        servoLeft = hwMap.get(Servo.class, "servoLeft");
+        servoRight = hwMap.get(Servo.class, "servoRight");
+        servoClaw = hwMap.get(Servo.class, "servoClaw");
+
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -62,6 +75,10 @@ public class Eagle {
 
         motorLift.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        servoLeft.setDirection(Servo.Direction.REVERSE);
+        servoRight.setDirection(Servo.Direction.FORWARD);
+        servoClaw.setDirection(Servo.Direction.FORWARD);
+
         //Set Mode
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -69,6 +86,10 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        servoLeft.setPosition(ARM_HOME);
+        servoRight.setPosition(ARM_HOME);
+        servoClaw.setPosition(ARM_HOME);
 
     }
 
@@ -115,6 +136,31 @@ public class Eagle {
         } else {
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
+        }
+    }
+
+    public void moveArm(double power1, double power2) {
+        if(power1 > 0) {
+            servoPosition += ARM_SPEED;
+        } else if(power2 > 0) {
+            servoPosition -= ARM_SPEED;
+        } else {
+            servoPosition += 0;
+        }
+
+        servoPosition = Range.clip(servoPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
+
+        servoLeft.setPosition(servoPosition);
+        servoRight.setPosition(servoPosition);
+    }
+
+    public void actionServoClaw(boolean power1, boolean power2) {
+        if(power1) {
+            servoClaw.setPosition(0.5);
+        } else if(power2) {
+            servoClaw.setPosition(0.0);
+        } else {
+            servoClaw.setPosition(servoClaw.getPosition());
         }
     }
 
