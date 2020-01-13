@@ -32,7 +32,7 @@ public class Eagle {
     private HardwareMap hwMap;
 
     private static final int MOTOR_TICK_COUNTS = 1120;
-    private static final double ARM_MAX_RANGE = 1.0d;
+    private static final double ARM_MAX_RANGE = 0.7d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
     private static final double ARM_SPEED = 0.005;
@@ -156,7 +156,7 @@ public class Eagle {
 
     public void actionServoClaw(boolean power1, boolean power2) {
         if(power1) {
-            servoClaw.setPosition(0.5);
+            servoClaw.setPosition(0.4);
         } else if(power2) {
             servoClaw.setPosition(0.0);
         } else {
