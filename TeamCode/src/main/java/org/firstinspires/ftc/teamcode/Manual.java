@@ -29,12 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Manual", group="Linear Opmode")
 
@@ -50,7 +47,7 @@ public class Manual extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        eagle.init(hardwareMap);
+        eagle.initHardware(hardwareMap);
 
         waitForStart();
         runtime.reset();
@@ -61,8 +58,8 @@ public class Manual extends LinearOpMode {
             eagle.manualMove(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
             eagle.moveLift(gamepad1.dpad_up, gamepad1.dpad_down);
             eagle.intake(gamepad1.right_bumper, gamepad1.left_bumper);
-            eagle.moveArm(gamepad1.right_trigger, gamepad1.left_trigger);
-            eagle.actionServoClaw(gamepad1.dpad_right, gamepad1.dpad_left);
+            eagle.moveArm(gamepad2.right_bumper, gamepad2.left_bumper);
+            eagle.actionServoClaw(gamepad1.a, gamepad1.y);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
