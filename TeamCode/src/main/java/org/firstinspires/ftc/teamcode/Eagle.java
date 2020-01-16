@@ -36,6 +36,7 @@ public class Eagle {
     private Servo servoLeft;
     private Servo servoRight;
     private Servo servoClaw;
+    private Servo servoLateral;
 
     private HardwareMap hwMap;
 
@@ -89,6 +90,7 @@ public class Eagle {
         servoLeft = hwMap.get(Servo.class, "servoLeft");
         servoRight = hwMap.get(Servo.class, "servoRight");
         servoClaw = hwMap.get(Servo.class, "servoClaw");
+        servoLateral = hwMap.get(Servo.class, "servoLateral");
 
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -104,6 +106,7 @@ public class Eagle {
         servoLeft.setDirection(Servo.Direction.REVERSE);
         servoRight.setDirection(Servo.Direction.FORWARD);
         servoClaw.setDirection(Servo.Direction.FORWARD);
+        servoLateral.setDirection(Servo.Direction.FORWARD);
 
         //Set Mode
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -116,6 +119,7 @@ public class Eagle {
         servoLeft.setPosition(ARM_HOME);
         servoRight.setPosition(ARM_HOME);
         servoClaw.setPosition(ARM_HOME);
+        servoLateral.setPosition(ARM_HOME);
 
     }
 
@@ -160,11 +164,11 @@ public class Eagle {
 
     public void intake(boolean power1, boolean power2) {
         if(power1) {
-            intakeRight.setPower(0.75);
-            intakeLeft.setPower(0.75);
+            intakeRight.setPower(0.85);
+            intakeLeft.setPower(0.85);
         } else if(power2) {
-            intakeRight.setPower(-0.75);
-            intakeLeft.setPower(-0.75);
+            intakeRight.setPower(-0.85);
+            intakeLeft.setPower(-0.85);
         } else {
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
@@ -193,6 +197,16 @@ public class Eagle {
             servoClaw.setPosition(0.0);
         } else {
             servoClaw.setPosition(servoClaw.getPosition());
+        }
+    }
+
+    public void actionServoLateral(boolean power1, boolean power2) {
+        if(power1) {
+            servoLateral.setPosition(0.45);
+        } else if(power2) {
+            servoLateral.setPosition(0.0);
+        } else {
+            servoLateral.setPosition(servoLateral.getPosition());
         }
     }
 

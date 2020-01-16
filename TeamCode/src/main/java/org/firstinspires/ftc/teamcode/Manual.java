@@ -60,6 +60,7 @@ public class Manual extends LinearOpMode {
             eagle.intake(gamepad1.right_bumper, gamepad1.left_bumper);
             eagle.moveArm(gamepad2.right_bumper, gamepad2.left_bumper);
             eagle.actionServoClaw(gamepad1.a, gamepad1.y);
+            eagle.actionServoLateral(gamepad2.a, gamepad2.y);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
