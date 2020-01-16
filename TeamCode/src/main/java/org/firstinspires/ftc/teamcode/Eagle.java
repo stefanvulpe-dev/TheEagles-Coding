@@ -43,7 +43,7 @@ public class Eagle {
     private static final double ARM_MAX_RANGE = 0.7d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
-    private static final double ARM_SPEED = 0.003;
+    private static final double ARM_SPEED = 0.0035;
     private double servoPosition = ARM_HOME;
 
 
