@@ -43,7 +43,7 @@ public class Eagle {
     private static final double ARM_MAX_RANGE = 0.7d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
-    private static final double ARM_SPEED = 2;
+    private static final double ARM_SPEED = 0.0035;
     private double servoPosition = ARM_HOME;
 
 
@@ -160,11 +160,11 @@ public class Eagle {
 
     public void intake(boolean power1, boolean power2) {
         if(power1) {
-            intakeRight.setPower(0.75);
-            intakeLeft.setPower(0.75);
+            intakeRight.setPower(0.85);
+            intakeLeft.setPower(0.85);
         } else if(power2) {
-            intakeRight.setPower(-0.75);
-            intakeLeft.setPower(-0.75);
+            intakeRight.setPower(-0.85);
+            intakeLeft.setPower(-0.85);
         } else {
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
