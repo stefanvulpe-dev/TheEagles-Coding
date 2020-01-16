@@ -164,11 +164,11 @@ public class Eagle {
 
     public void intake(boolean power1, boolean power2) {
         if(power1) {
-            intakeRight.setPower(0.75);
-            intakeLeft.setPower(0.75);
+            intakeRight.setPower(0.85);
+            intakeLeft.setPower(0.85);
         } else if(power2) {
-            intakeRight.setPower(-0.75);
-            intakeLeft.setPower(-0.75);
+            intakeRight.setPower(-0.85);
+            intakeLeft.setPower(-0.85);
         } else {
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
