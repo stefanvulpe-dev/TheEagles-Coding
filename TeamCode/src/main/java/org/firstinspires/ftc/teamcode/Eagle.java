@@ -123,9 +123,9 @@ public class Eagle {
 
     }
 
-    public void initTF() {
-        initVuforia();
-        initTfod();
+    public void initTF(HardwareMap ahwMap) {
+        initVuforia(ahwMap);
+        initTfod(ahwMap);
         tfod.activate();
     }
 
@@ -154,7 +154,7 @@ public class Eagle {
 
     public void moveLift(boolean power1, boolean power2) {
         if(power1) {
-            motorLift.setPower(0.5);
+            motorLift.setPower(0.8);
         } else if(power2) {
             motorLift.setPower(-0.5);
         } else {
@@ -192,7 +192,7 @@ public class Eagle {
 
     public void actionServoClaw(boolean power1, boolean power2) {
         if(power1) {
-            servoClaw.setPosition(0.5);
+            servoClaw.setPosition(0.45);
         } else if(power2) {
             servoClaw.setPosition(0.0);
         } else {
@@ -213,12 +213,6 @@ public class Eagle {
     //Functii autonom
 
     public void strafeForward(double distance) {
-        //Set Mode
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         //Reset encoders
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -234,10 +228,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(target);
 
-        leftFrontDrive.setPower(0.5);
-        leftBackDrive.setPower(-0.5);
-        rightFrontDrive.setPower(-0.5);
-        rightBackDrive.setPower(0.5);
+        leftFrontDrive.setPower(0.35);
+        leftBackDrive.setPower(-0.35);
+        rightFrontDrive.setPower(0.35);
+        rightBackDrive.setPower(-0.35);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -245,16 +239,15 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-        while(leftFrontDrive.isBusy() || leftBackDrive.isBusy()
-                || rightFrontDrive.isBusy() || rightBackDrive.isBusy())
-        {
+        while(leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
             //wait
         }
 
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        leftFrontDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
+        rightFrontDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
+
 
     }
 
@@ -266,7 +259,9 @@ public class Eagle {
 
     }
 
-
+    public void takeSkyStone() {
+        servoLateral.setPosition(0.5);
+    }
 
     public void searchSkystone() {
         // We'll loop until gold block captured or time is up
@@ -398,14 +393,14 @@ public class Eagle {
 
 
 
-    private void initVuforia() {
+    private void initVuforia(HardwareMap bhwMap) {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hwMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraName = bhwMap.get(WebcamName.class, "Webcam 1");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -416,9 +411,9 @@ public class Eagle {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    private void initTfod() {
-        int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
+    private void initTfod(HardwareMap chwMap) {
+        int tfodMonitorViewId = chwMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", chwMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minimumConfidence = 0.7;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

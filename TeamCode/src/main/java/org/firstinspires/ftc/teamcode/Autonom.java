@@ -18,7 +18,7 @@ public class Autonom extends LinearOpMode {
         telemetry.addData("Init ", "started");
         telemetry.update();
 
-        eagle.initTF();
+        eagle.initTF(hardwareMap);
 
         telemetry.addData("Vuforia & Tfod", "initialized");
         telemetry.update();
@@ -36,16 +36,17 @@ public class Autonom extends LinearOpMode {
 
         waitForStart();
 
-        //move pana vad 3 blcuri
-        eagle.strafeForward(30);
 
-        eagle.searchSkystone();
+        //move pana vad 3 blcuri
+        eagle.strafeForward(44);
+        eagle.takeSkyStone();
+        //eagle.searchSkystone();
 
 
         // Skystone found, time is up or stop was requested.
-        eagle.tfod.shutdown();
+        //eagle.tfod.shutdown();
         // Pause to let driver station to see last telemetry.
-        sleep(2000);
+        //sleep(2000);
 
     }
 
