@@ -168,7 +168,7 @@ public class Eagle {
             intakeLeft.setPower(0.9);
         } else if(power2) {
             intakeRight.setPower(-0.9);
-            intakeLeft.setPower(-0.9);
+            intakeLeft.setPower(-0.8);
         } else {
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
