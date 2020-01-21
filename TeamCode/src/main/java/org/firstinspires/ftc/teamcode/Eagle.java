@@ -106,7 +106,7 @@ public class Eagle {
         servoLeft.setDirection(Servo.Direction.REVERSE);
         servoRight.setDirection(Servo.Direction.FORWARD);
         servoClaw.setDirection(Servo.Direction.FORWARD);
-        servoLateral.setDirection(Servo.Direction.FORWARD);
+        servoLateral.setDirection(Servo.Direction.REVERSE);
 
         //Set Mode
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -260,7 +260,7 @@ public class Eagle {
     }
 
     public void takeSkyStone() {
-        servoLateral.setPosition(0.5);
+        servoLateral.setPosition(0.45);
     }
 
     public void searchSkystone() {
