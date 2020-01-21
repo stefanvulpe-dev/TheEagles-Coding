@@ -154,9 +154,9 @@ public class Eagle {
 
     public void moveLift(boolean power1, boolean power2) {
         if(power1) {
-            motorLift.setPower(0.8);
+            motorLift.setPower(0.9);
         } else if(power2) {
-            motorLift.setPower(-0.5);
+            motorLift.setPower(-0.6);
         } else {
             motorLift.setPower(0.0);
         }
@@ -164,11 +164,11 @@ public class Eagle {
 
     public void intake(boolean power1, boolean power2) {
         if(power1) {
-            intakeRight.setPower(0.85);
-            intakeLeft.setPower(0.85);
+            intakeRight.setPower(0.9);
+            intakeLeft.setPower(0.9);
         } else if(power2) {
-            intakeRight.setPower(-0.85);
-            intakeLeft.setPower(-0.85);
+            intakeRight.setPower(-0.9);
+            intakeLeft.setPower(-0.9);
         } else {
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
@@ -192,7 +192,7 @@ public class Eagle {
 
     public void actionServoClaw(boolean power1, boolean power2) {
         if(power1) {
-            servoClaw.setPosition(0.45);
+            servoClaw.setPosition(0.4);
         } else if(power2) {
             servoClaw.setPosition(0.0);
         } else {
