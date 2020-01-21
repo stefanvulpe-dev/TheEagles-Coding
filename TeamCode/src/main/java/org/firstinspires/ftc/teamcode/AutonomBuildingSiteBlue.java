@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Autonom", group = "Autonomous")
+@Autonomous(name = "AutonomBuildingSiteBlue", group = "Autonomous")
 
-public class Autonom extends LinearOpMode {
+public class AutonomBuildingSiteBlue extends LinearOpMode {
 
     private Eagle eagle = new Eagle();
 
