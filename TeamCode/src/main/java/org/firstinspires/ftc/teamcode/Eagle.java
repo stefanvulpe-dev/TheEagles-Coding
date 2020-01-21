@@ -154,7 +154,7 @@ public class Eagle {
 
     public void moveLift(boolean power1, boolean power2) {
         if(power1) {
-            motorLift.setPower(0.9);
+            motorLift.setPower(1);
         } else if(power2) {
             motorLift.setPower(-0.6);
         } else {
@@ -192,7 +192,7 @@ public class Eagle {
 
     public void actionServoClaw(boolean power1, boolean power2) {
         if(power1) {
-            servoClaw.setPosition(0.4);
+            servoClaw.setPosition(0.35);
         } else if(power2) {
             servoClaw.setPosition(0.0);
         } else {
