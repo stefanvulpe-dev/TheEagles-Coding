@@ -39,7 +39,7 @@ public class AutonomBuildingSiteBlue extends LinearOpMode {
 
         //move pana vad 3 blcuri
         eagle.strafeForward(44);
-        eagle.takeSkyStone();
+
         //eagle.searchSkystone();
 
 
