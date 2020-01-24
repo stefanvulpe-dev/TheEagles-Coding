@@ -18,7 +18,7 @@ public class AutonomBuildingSiteBlue extends LinearOpMode {
         telemetry.addData("Init ", "started");
         telemetry.update();
 
-        eagle.initTF(hardwareMap);
+        //eagle.initTF(hardwareMap);
 
         telemetry.addData("Vuforia & Tfod", "initialized");
         telemetry.update();
@@ -38,8 +38,9 @@ public class AutonomBuildingSiteBlue extends LinearOpMode {
 
 
         //move pana vad 3 blcuri
-        eagle.strafeForward(44);
-
+        eagle.move(-0.35);
+        sleep(2500);
+        eagle.move(0);
         //eagle.searchSkystone();
 
 
