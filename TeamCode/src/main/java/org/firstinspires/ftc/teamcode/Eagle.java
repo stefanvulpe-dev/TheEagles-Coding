@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -40,16 +38,15 @@ public class Eagle {
     private Servo servoClaw;
     private Servo servoLateral;
 
-    private CRServo servoTeamMarker;
-
     private HardwareMap hwMap;
 
     private static final int MOTOR_TICK_COUNTS = 1120;
-    private static final double ARM_MAX_RANGE = 0.75d;
+    private static final double ARM_MAX_RANGE = 0.73d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
-    private static final double ARM_SPEED = 0.0045;
+    private static final double ARM_SPEED = 0.0055;
     private double servoPosition = ARM_HOME;
+
 
     //Autonomous constants
 
@@ -94,7 +91,7 @@ public class Eagle {
         servoRight = hwMap.get(Servo.class, "servoRight");
         servoClaw = hwMap.get(Servo.class, "servoClaw");
         servoLateral = hwMap.get(Servo.class, "servoLateral");
-        servoTeamMarker = hwMap.get(CRServo.class, "servoTeamMarker");
+
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -110,7 +107,7 @@ public class Eagle {
         servoRight.setDirection(Servo.Direction.FORWARD);
         servoClaw.setDirection(Servo.Direction.FORWARD);
         servoLateral.setDirection(Servo.Direction.REVERSE);
-        servoTeamMarker.setDirection(CRServo.Direction.FORWARD);
+
         //Set Mode
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -213,15 +210,6 @@ public class Eagle {
         }
     }
 
-    public void actionServoTeamMarker(boolean power1 , boolean power2) {
-        if(power1) {
-            servoTeamMarker.setPower(0.3);
-        } else if(power2) {
-            servoTeamMarker.setPower(-0.3);
-        } else {
-            servoTeamMarker.setPower(0);
-        }
-    }
     //Functii autonom
 
     public void strafeForward(double distance) {
@@ -240,10 +228,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(target);
 
-        leftFrontDrive.setPower(0.25);
-        leftBackDrive.setPower(-0.25);
-        rightFrontDrive.setPower(0.25);
-        rightBackDrive.setPower(-0.25);
+        leftFrontDrive.setPower(0.35);
+        leftBackDrive.setPower(-0.35);
+        rightFrontDrive.setPower(0.35);
+        rightBackDrive.setPower(-0.35);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -261,42 +249,6 @@ public class Eagle {
         rightBackDrive.setPower(0.0);
 
 
-    }
-
-    public void strafeForward2(double power) {
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFrontDrive.setPower(-power);
-        leftBackDrive.setPower(power);
-        rightFrontDrive.setPower(power);
-        rightBackDrive.setPower(-power);
-    }
-
-    public void strafeBackward(double power) {
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFrontDrive.setPower(power);
-        leftBackDrive.setPower(-power);
-        rightFrontDrive.setPower(-power);
-        rightBackDrive.setPower(power);
-    }
-
-    public void move(double power) {
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFrontDrive.setPower(power);
-        leftBackDrive.setPower(power);
-        rightFrontDrive.setPower(power);
-        rightBackDrive.setPower(power);
     }
 
     public void moveLeft() {
@@ -395,9 +347,9 @@ public class Eagle {
                                 // Turn motors off by setting power to 0.
                                 LeftPower = 0;
                                 RightPower = 0;
-                                // Lower neck and open jaw.
-//                                LowerServo.setPosition(0.5);
-//                                UpperServo.setPosition(0.5);
+
+                                takeSkyStone();
+
                                 SkystoneFound = true;
                             } else {
                                 // Otherwise use current power levels to turn
