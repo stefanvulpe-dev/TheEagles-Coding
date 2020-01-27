@@ -85,11 +85,13 @@ public class AutonomSample extends LinearOpMode {
                                     eagle.moveRight(10);
                                     eagle.strafeForward(40);
                                     found = true;
+                                    telemetry.addLine("Breaked out from for");
                                 } else {
                                     telemetry.addData("Skystone position", "right");
                                     eagle.moveRight(30);
                                     eagle.strafeForward(40);
                                     found = true;
+                                    telemetry.addLine("Breaked out from for");
                                 }
                             }
                         } else {
@@ -101,9 +103,13 @@ public class AutonomSample extends LinearOpMode {
                 }
             }
 
+            telemetry.addLine("Out of for");
+
             if(!found) {
                 telemetry.addData("Skystone position", "left");
             }
+
+            telemetry.update();
 
         }
         tfod.shutdown();
