@@ -41,7 +41,7 @@ public class AutonomSample extends LinearOpMode {
 
         tfod.activate();
 
-        boolean isFound = false;
+        boolean found = false;
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -49,57 +49,63 @@ public class AutonomSample extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive() && !isFound) {
-            if (tfod != null) {
-                // getUpdatedRecognitions() will return null if no new information is available since
-                // the last time that call was made.
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        if(opModeIsActive()) {
 
-                if (updatedRecognitions != null) {
+            //move forward
+            eagle.strafeForward(48);
 
-                  telemetry.addData("# Object Detected", updatedRecognitions.size());
+            for(int i = 1; i <= 100 && !found; i ++) {
 
-                  if(updatedRecognitions.size() == 3) {
-                      int stone1X = -1;
-                      int stone2X = -1;
-                      int skyStoneX = -1;
+                sleep(10);
 
-                      for (Recognition recognition : updatedRecognitions) {
-                          if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
-                              skyStoneX = (int) recognition.getLeft();
-                          } else if (stone1X == -1) {
-                              stone1X = (int) recognition.getLeft();
-                          } else {
-                              stone2X = (int) recognition.getLeft();
-                          }
-                      }
+                if (tfod != null) {
+                    // getUpdatedRecognitions() will return null if no new information is available since
+                    // the last time that call was made.
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
-                      if (skyStoneX != -1 && stone1X != -1 && stone2X != -1) {
-                          if (skyStoneX < stone1X && skyStoneX < stone2X) {
-                              telemetry.addData("Skystone position", "left");
-                              eagle.moveLeft();
-                              eagle.strafeForward(20);
-                              isFound = true;
-                          } else if (skyStoneX > stone1X && skyStoneX > stone2X) {
-                              telemetry.addData("Skystone position", "right");
-                              eagle.moveRight();
-                              eagle.strafeForward(20);
-                              isFound = true;
-                          } else {
-                              telemetry.addData("SkyStone position", "center");
-                              eagle.strafeForward(40);
-                              isFound = true;
-                          }
-                      }
-                  } else {
-                      //Back up slowly
-                      telemetry.addData("Action", "backing up slowly");
-                  }
-                  telemetry.update();
+                    if (updatedRecognitions != null) {
+
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+
+                        if (updatedRecognitions.size() == 2) {
+                            int stoneX = -1;
+                            int skyStoneX = -1;
+
+                            for (Recognition recognition : updatedRecognitions) {
+                                if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
+                                    skyStoneX = (int) recognition.getLeft();
+                                }  else {
+                                    stoneX = (int) recognition.getLeft();
+                                }
+                            }
+
+                            if (skyStoneX != -1 && stoneX != -1) {
+                                if (skyStoneX < stoneX) {
+                                    telemetry.addData("Skystone position", "center");
+                                    eagle.moveRight(10);
+                                    eagle.strafeForward(40);
+                                    found = true;
+                                } else {
+                                    telemetry.addData("Skystone position", "right");
+                                    eagle.moveRight(30);
+                                    eagle.strafeForward(40);
+                                    found = true;
+                                }
+                            }
+                        } else {
+                            //Back up slowly
+                            telemetry.addData("Action", "backing up slowly");
+                        }
+                        telemetry.update();
+                    }
                 }
             }
-        }
 
+            if(!found) {
+                telemetry.addData("Skystone position", "left");
+            }
+
+        }
         tfod.shutdown();
 
     }
