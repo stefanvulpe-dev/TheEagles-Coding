@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,6 +37,7 @@ public class Eagle {
     private Servo servoRight;
     private Servo servoClaw;
     private Servo servoBlue;
+    private CRServo servoTeamMarker;
 
     private HardwareMap hwMap;
 
@@ -90,6 +92,7 @@ public class Eagle {
         servoRight = hwMap.get(Servo.class, "servoRight");
         servoClaw = hwMap.get(Servo.class, "servoClaw");
         servoBlue = hwMap.get(Servo.class, "servoBlue");
+        servoTeamMarker = hwMap.get(CRServo.class, "servoTeamMarker");
 
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -106,6 +109,7 @@ public class Eagle {
         servoRight.setDirection(Servo.Direction.FORWARD);
         servoClaw.setDirection(Servo.Direction.FORWARD);
         servoBlue.setDirection(Servo.Direction.REVERSE);
+        servoTeamMarker.setDirection(CRServo.Direction.FORWARD);
 
         //Set Mode
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -206,6 +210,16 @@ public class Eagle {
             servoBlue.setPosition(0.0);
         } else {
             servoBlue.setPosition(servoBlue.getPosition());
+        }
+    }
+
+    public void actionServoTeamMarker(boolean power1, boolean power2) {
+        if(power1) {
+            servoTeamMarker.setPower(0.4);
+        } else if(power2) {
+            servoTeamMarker.setPower(-0.4);
+        } else {
+            servoTeamMarker.setPower(0);
         }
     }
 

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
+@TeleOp(name = "AutonomSample", group = "Concept")
 
 public class AutonomSample extends LinearOpMode {
 
