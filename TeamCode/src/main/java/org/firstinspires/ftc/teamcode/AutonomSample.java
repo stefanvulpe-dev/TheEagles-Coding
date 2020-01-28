@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@TeleOp(name = "AutonomSample", group = "Concept")
+@Autonomous(name ="AutonomSample", group = "Concept")
 
 public class AutonomSample extends LinearOpMode {
 
@@ -52,9 +53,9 @@ public class AutonomSample extends LinearOpMode {
         if(opModeIsActive()) {
 
             //move forward
-            eagle.strafeForward(48);
+            eagle.strafeForward(58);
 
-            for(int i = 1; i <= 100 && !found; i ++) {
+            for(int i = 1; i <= 50 && !found; i ++) {
 
                 sleep(10);
 
@@ -63,7 +64,7 @@ public class AutonomSample extends LinearOpMode {
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
-                    if (updatedRecognitions != null) {
+                    if (updatedRecognitions != null && !found) {
 
                         telemetry.addData("# Object Detected", updatedRecognitions.size());
 
@@ -84,19 +85,18 @@ public class AutonomSample extends LinearOpMode {
                                     telemetry.addData("Skystone position", "center");
                                     eagle.moveRight(10);
                                     eagle.strafeForward(40);
+                                    eagle.takeSkyStone();
                                     found = true;
                                     telemetry.addLine("Breaked out from for");
                                 } else {
                                     telemetry.addData("Skystone position", "right");
                                     eagle.moveRight(30);
                                     eagle.strafeForward(40);
+                                    eagle.takeSkyStone();
                                     found = true;
                                     telemetry.addLine("Breaked out from for");
                                 }
                             }
-                        } else {
-                            //Back up slowly
-                            telemetry.addData("Action", "backing up slowly");
                         }
                         telemetry.update();
                     }
@@ -104,12 +104,19 @@ public class AutonomSample extends LinearOpMode {
             }
 
             telemetry.addLine("Out of for");
+            telemetry.update();
+            sleep(500);
 
             if(!found) {
                 telemetry.addData("Skystone position", "left");
+                telemetry.update();
+                eagle.moveLeft(12);
+                eagle.strafeForward(40);
+                eagle.takeSkyStone();
             }
-
-            telemetry.update();
+            sleep(500);
+            eagle.strafeBackward(35);
+            eagle.moveRight(140);
 
         }
         tfod.shutdown();
@@ -139,10 +146,10 @@ public class AutonomSample extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-       tfodParameters.minimumConfidence = 0.8;
-       tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-       tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        tfodParameters.minimumConfidence = 0.8;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }
