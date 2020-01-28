@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaSkyStone;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
@@ -36,7 +35,7 @@ public class Eagle {
     private Servo servoLeft;
     private Servo servoRight;
     private Servo servoClaw;
-    private Servo servoLateral;
+    private Servo servoBlue;
 
     private HardwareMap hwMap;
 
@@ -90,7 +89,7 @@ public class Eagle {
         servoLeft = hwMap.get(Servo.class, "servoLeft");
         servoRight = hwMap.get(Servo.class, "servoRight");
         servoClaw = hwMap.get(Servo.class, "servoClaw");
-        servoLateral = hwMap.get(Servo.class, "servoLateral");
+        servoBlue = hwMap.get(Servo.class, "servoBlue");
 
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -106,7 +105,7 @@ public class Eagle {
         servoLeft.setDirection(Servo.Direction.REVERSE);
         servoRight.setDirection(Servo.Direction.FORWARD);
         servoClaw.setDirection(Servo.Direction.FORWARD);
-        servoLateral.setDirection(Servo.Direction.REVERSE);
+        servoBlue.setDirection(Servo.Direction.REVERSE);
 
         //Set Mode
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -119,7 +118,7 @@ public class Eagle {
         servoLeft.setPosition(ARM_HOME);
         servoRight.setPosition(ARM_HOME);
         servoClaw.setPosition(ARM_HOME);
-        servoLateral.setPosition(ARM_HOME);
+        servoBlue.setPosition(ARM_HOME);
 
     }
 
@@ -202,11 +201,11 @@ public class Eagle {
 
     public void actionServoLateral(boolean power1, boolean power2) {
         if(power1) {
-            servoLateral.setPosition(0.45);
+            servoBlue.setPosition(0.45);
         } else if(power2) {
-            servoLateral.setPosition(0.0);
+            servoBlue.setPosition(0.0);
         } else {
-            servoLateral.setPosition(servoLateral.getPosition());
+            servoBlue.setPosition(servoBlue.getPosition());
         }
     }
 
@@ -251,16 +250,84 @@ public class Eagle {
 
     }
 
-    public void moveLeft() {
+    public void moveLeft(double distance) {
+        //Reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double circumference = Math.PI * 10;
+        double rotationsNeeded = distance/circumference;
+        int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
+
+        leftFrontDrive.setTargetPosition(target);
+        leftBackDrive.setTargetPosition(target);
+        rightFrontDrive.setTargetPosition(target);
+        rightBackDrive.setTargetPosition(target);
+
+        leftFrontDrive.setPower(0.35);
+        leftBackDrive.setPower(0.35);
+        rightFrontDrive.setPower(-0.35);
+        rightBackDrive.setPower(-0.35);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        while(leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+            //wait
+        }
+
+        leftFrontDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
+        rightFrontDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
 
     }
 
-    public void moveRight() {
+    public void moveRight(double distance) {
+        //Reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double circumference = Math.PI * 10;
+        double rotationsNeeded = distance/circumference;
+        int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
+
+        leftFrontDrive.setTargetPosition(target);
+        leftBackDrive.setTargetPosition(target);
+        rightFrontDrive.setTargetPosition(target);
+        rightBackDrive.setTargetPosition(target);
+
+        leftFrontDrive.setPower(-0.35);
+        leftBackDrive.setPower(-0.35);
+        rightFrontDrive.setPower(0.35);
+        rightBackDrive.setPower(0.35);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        while(leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+            //wait
+        }
+
+        leftFrontDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
+        rightFrontDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
 
     }
 
     public void takeSkyStone() {
-        servoLateral.setPosition(0.45);
+        servoBlue.setPosition(0.48);
     }
 
     public void searchSkystone() {
