@@ -64,7 +64,7 @@ public class AutonomSample extends LinearOpMode {
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
-                    if (updatedRecognitions != null && !found) {
+                    if (updatedRecognitions != null) {
 
                         telemetry.addData("# Object Detected", updatedRecognitions.size());
 
