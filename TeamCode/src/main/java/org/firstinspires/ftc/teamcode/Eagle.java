@@ -167,11 +167,11 @@ public class Eagle {
 
     public void intake(boolean power1, boolean power2) {
         if(power1) {
-            intakeRight.setPower(0.9);
-            intakeLeft.setPower(0.9);
+            intakeRight.setPower(1);
+            intakeLeft.setPower(1);
         } else if(power2) {
-            intakeRight.setPower(-0.9);
-            intakeLeft.setPower(-0.8);
+            intakeRight.setPower(-1);
+            intakeLeft.setPower(-1);
         } else {
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
@@ -195,7 +195,7 @@ public class Eagle {
 
     public void actionServoClaw(boolean power1, boolean power2) {
         if(power1) {
-            servoClaw.setPosition(0.35);
+            servoClaw.setPosition(0.45);
         } else if(power2) {
             servoClaw.setPosition(0.0);
         } else {
