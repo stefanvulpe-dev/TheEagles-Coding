@@ -416,6 +416,44 @@ public class Eagle {
         rightBackDrive.setPower(0.0);
     }
 
+    public void navigateLeft(double distance) {
+        //Reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double circumference = Math.PI * 10;
+        double rotationsNeeded = distance/circumference;
+        int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
+
+        leftFrontDrive.setTargetPosition(target);
+        leftBackDrive.setTargetPosition(target);
+        rightFrontDrive.setTargetPosition(-target);
+        rightBackDrive.setTargetPosition(-target);
+
+        leftFrontDrive.setPower(0.65);
+        leftBackDrive.setPower(0.65);
+        rightFrontDrive.setPower(0.65);
+        rightBackDrive.setPower(0.65);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        while(leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+            //wait
+        }
+
+        leftFrontDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
+        rightFrontDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
+
+    }
+
     public void takeSkyStone() {
         servoBlue.setPosition(0.48);
     }
