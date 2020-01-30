@@ -27,13 +27,15 @@ public class AutonomLoadingBlue extends LinearOpMode {
 
         if(opModeIsActive()) {
 
-            eagle.strafeForward(60);
+            eagle.strafeForward(55);
 
             //make Sample
             eagle.makeSampleBlue();
 
             //Park
             eagle.moveLeft(10);
+
+            //End
         }
 
         eagle.TF_shutdown();

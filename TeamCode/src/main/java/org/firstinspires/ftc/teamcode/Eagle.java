@@ -454,8 +454,12 @@ public class Eagle {
 
     }
 
-    public void takeSkyStone() {
+    private void takeSkyStone() {
         servoBlue.setPosition(0.48);
+    }
+
+    private void leaveSkyStone() {
+        servoBlue.setPosition(0);
     }
 
     public void makeSampleBlue() throws InterruptedException {
@@ -490,7 +494,7 @@ public class Eagle {
                         if (skyStoneX != -1 && stoneX != -1) {
                             if (skyStoneX < stoneX) {
                                 //Position center
-                                moveRight(10);
+                                moveRight(7);
                                 strafeForward(40);
                                 takeSkyStone();
                                 found = true;
@@ -522,20 +526,44 @@ public class Eagle {
         switch (position) {
             case "left" :
                 strafeBackward(35);
-                navigateRight(140);
+                navigateRight(160);
+                leaveSkyStone();
+                sleep(250);
                 //Ma intorc dupa celalalt
+                navigateLeft(235);
+                strafeForward(35);
+                takeSkyStone();
+                sleep(100);
+                strafeBackward(35);
+                navigateRight(210);
             break;
 
             case "right" :
                 strafeBackward(35);
-                navigateRight(80);
+                navigateRight(130);
+                leaveSkyStone();
                 //Ma intorc dupa celalalt
+                sleep(250);
+                navigateLeft(195);
+                strafeForward(35);
+                takeSkyStone();
+                sleep(100);
+                strafeBackward(35);
+                navigateRight(190);
             break;
 
             case "center" :
                 strafeBackward(35);
-                navigateRight(90);
+                navigateRight(140);
+                leaveSkyStone();
+                sleep(250);
                 //Ma intorc dupa celalalt
+                navigateLeft(210);
+                strafeForward(35);
+                takeSkyStone();
+                sleep(100);
+                strafeBackward(35);
+                navigateRight(230);
             break;
         }
 
