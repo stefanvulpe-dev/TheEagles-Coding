@@ -26,7 +26,7 @@ public class AutonomLoadingBlue extends LinearOpMode {
         waitForStart();
 
         if(opModeIsActive()) {
-
+            //Scan stones
             eagle.strafeForward(55);
 
             //make Sample

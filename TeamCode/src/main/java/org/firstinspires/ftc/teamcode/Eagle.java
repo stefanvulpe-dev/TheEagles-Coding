@@ -43,7 +43,7 @@ public class Eagle {
 
     private HardwareMap hwMap;
 
-    private static final int MOTOR_TICK_COUNTS = 1120;
+    private static final int MOTOR_TICK_COUNTS = 1440;
     private static final double ARM_MAX_RANGE = 0.73d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
