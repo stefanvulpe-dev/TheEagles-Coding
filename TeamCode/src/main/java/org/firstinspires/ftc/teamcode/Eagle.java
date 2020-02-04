@@ -182,7 +182,7 @@ public class Eagle {
 
     }
 
-    public void moveLift(boolean power1, boolean power2) {
+    public void moveLift(boolean power1, boolean power2) throws InterruptedException {
         if(power1) {
             liftPower += liftSpeed;
         } else if(power2) {
@@ -192,6 +192,7 @@ public class Eagle {
         }
         liftPower = Range.clip(liftPower, LIFT_MIN_SPEED, LIFT_MAX_SPEED);
         motorLift.setPower(liftPower);
+        sleep(250);
     }
 
     public void intake(boolean power1, boolean power2) {
