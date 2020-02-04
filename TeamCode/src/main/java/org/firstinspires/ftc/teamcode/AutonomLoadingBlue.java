@@ -23,7 +23,13 @@ public class AutonomLoadingBlue extends LinearOpMode {
         //Init TF
         eagle.initTF(hardwareMap);
 
-        waitForStart();
+        while (isStarted() == false && isStopRequested() == false) {
+            telemetry.addData("some key", "some data");
+            telemetry.update();
+            sleep(200);
+        }
+
+        //waitForStart();
 
         if(opModeIsActive()) {
             //Scan stones

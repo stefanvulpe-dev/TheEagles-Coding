@@ -20,7 +20,13 @@ public class Manual extends LinearOpMode {
 
         eagle.initHardware(hardwareMap);
 
-        waitForStart();
+        while (isStarted() == false && isStopRequested() == false) {
+            telemetry.addData("some key", "some data");
+            telemetry.update();
+            sleep(200);
+        }
+
+        //waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
@@ -31,8 +37,8 @@ public class Manual extends LinearOpMode {
             eagle.intake(gamepad1.right_bumper, gamepad1.left_bumper);
             eagle.moveArm(gamepad2.right_bumper, gamepad2.left_bumper);
             eagle.actionServoClaw(gamepad2.a, gamepad2.y);
-            //eagle.actionServoBlue(gamepad2.x, gamepad2.b);
-            eagle.actionServoTeamMarker(gamepad2.x,gamepad2.b);
+            eagle.actionServoPlate(gamepad2.x, gamepad2.b);
+            //eagle.actionServoTeamMarker(gamepad2.x,gamepad2.b);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();

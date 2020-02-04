@@ -38,7 +38,12 @@ public class Eagle {
     private Servo servoLeft;
     private Servo servoRight;
     private Servo servoClaw;
+
     private Servo servoBlue;
+    private Servo servoBlueClaw;
+
+    private Servo servoPlateRight;
+    private Servo servoPlateLeft;
     private CRServo servoTeamMarker;
 
     private HardwareMap hwMap;
@@ -87,7 +92,13 @@ public class Eagle {
         servoLeft = hwMap.get(Servo.class, "servoLeft");
         servoRight = hwMap.get(Servo.class, "servoRight");
         servoClaw = hwMap.get(Servo.class, "servoClaw");
+
         servoBlue = hwMap.get(Servo.class, "servoBlue");
+        servoBlueClaw = hwMap.get(Servo.class, "servoBlueClaw");
+
+        servoPlateRight = hwMap.get(Servo.class, "servoPlateRight");
+        servoPlateLeft = hwMap.get(Servo.class, "servoPlateLeft");
+
         servoTeamMarker = hwMap.get(CRServo.class, "servoTeamMarker");
 
         //Set Direction
@@ -104,7 +115,13 @@ public class Eagle {
         servoLeft.setDirection(Servo.Direction.REVERSE);
         servoRight.setDirection(Servo.Direction.FORWARD);
         servoClaw.setDirection(Servo.Direction.FORWARD);
+
         servoBlue.setDirection(Servo.Direction.REVERSE);
+        servoBlueClaw.setDirection(Servo.Direction.REVERSE);
+
+        servoPlateRight.setDirection(Servo.Direction.FORWARD);
+        servoPlateLeft.setDirection(Servo.Direction.REVERSE);
+
         servoTeamMarker.setDirection(CRServo.Direction.FORWARD);
 
         //Set Mode
@@ -114,11 +131,15 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         servoLeft.setPosition(ARM_HOME);
         servoRight.setPosition(ARM_HOME);
         servoClaw.setPosition(ARM_HOME);
         servoBlue.setPosition(ARM_HOME);
+        servoPlateRight.setPosition(ARM_HOME);
+        servoPlateLeft.setPosition(ARM_HOME);
+        servoBlueClaw.setPosition(ARM_HOME);
 
     }
 
@@ -159,7 +180,7 @@ public class Eagle {
         if(power1) {
             motorLift.setPower(1);
         } else if(power2) {
-            motorLift.setPower(-0.6);
+            motorLift.setPower(-0.75);
         } else {
             motorLift.setPower(0.0);
         }
@@ -195,7 +216,7 @@ public class Eagle {
 
     public void actionServoClaw(boolean power1, boolean power2) {
         if(power1) {
-            servoClaw.setPosition(0.45);
+            servoClaw.setPosition(0.32);
         } else if(power2) {
             servoClaw.setPosition(0.0);
         } else {
@@ -203,13 +224,16 @@ public class Eagle {
         }
     }
 
-    public void actionServoBlue(boolean power1, boolean power2) {
+    public void actionServoPlate(boolean power1, boolean power2) {
         if(power1) {
-            servoBlue.setPosition(0.45);
+            servoPlateRight.setPosition(1.0);
+            servoPlateLeft.setPosition(1.0);
         } else if(power2) {
-            servoBlue.setPosition(0.0);
+            servoPlateRight.setPosition(0.0);
+            servoPlateLeft.setPosition(0.0);
         } else {
-            servoBlue.setPosition(servoBlue.getPosition());
+            servoPlateRight.setPosition(servoPlateRight.getPosition());
+            servoPlateLeft.setPosition(servoPlateLeft.getPosition());
         }
     }
 
@@ -454,8 +478,28 @@ public class Eagle {
 
     }
 
-    public void takeSkyStone() {
+    public void goToPos() throws InterruptedException {
+        servoBlueClaw.setPosition(0.35);
+        sleep(250);
+    }
+
+    public void takeSkyStone() throws InterruptedException {
         servoBlue.setPosition(0.48);
+        sleep(500);
+        servoBlueClaw.setPosition(0.53);
+        sleep(250);
+        servoBlue.setPosition(ARM_HOME);
+
+    }
+
+
+    private void leaveSkyStone() throws InterruptedException {
+        servoBlue.setPosition(0.48);
+        sleep(250);
+        servoBlueClaw.setPosition(0.35);
+        sleep(250);
+        servoBlue.setPosition(ARM_HOME);
+
     }
 
     public void makeSampleBlue() throws InterruptedException {
@@ -480,7 +524,7 @@ public class Eagle {
                         int skyStoneX = -1;
 
                         for (Recognition recognition : updatedRecognitions) {
-                            if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
+                            if (recognition.getLabel().equals("SkyStone")) {
                                 skyStoneX = (int) recognition.getLeft();
                             }  else {
                                 stoneX = (int) recognition.getLeft();
@@ -490,15 +534,15 @@ public class Eagle {
                         if (skyStoneX != -1 && stoneX != -1) {
                             if (skyStoneX < stoneX) {
                                 //Position center
-                                moveRight(7);
-                                strafeForward(40);
+                                //moveRight(1);
+                                strafeForward(15);
                                 takeSkyStone();
                                 found = true;
                                 position = "center";
                             } else {
                                 //Position right
-                                moveRight(30);
-                                strafeForward(40);
+                                moveRight(18);
+                                strafeForward(15);
                                 takeSkyStone();
                                 found = true;
                                 position = "right";
@@ -512,7 +556,7 @@ public class Eagle {
         if(!found) {
             //Position Left
             moveLeft(12);
-            strafeForward(40);
+            strafeForward(15);
             takeSkyStone();
             position = "left";
         }
@@ -521,22 +565,53 @@ public class Eagle {
 
         switch (position) {
             case "left" :
-                strafeBackward(35);
-                navigateRight(180);
+                strafeBackward(15);
+                navigateRight(150);
+                leaveSkyStone();
+                sleep(250);
                 //Ma intorc dupa celalalt
-            break;
+                navigateLeft(210);
+                strafeForward(14);
+                takeSkyStone();
+                sleep(250);
+                strafeBackward(15);
+                navigateRight(215);
+                leaveSkyStone();
+                sleep(250);
+                break;
 
             case "right" :
-                strafeBackward(35);
-                navigateRight(80);
+                strafeBackward(15);
+                navigateRight(100);
+                leaveSkyStone();
                 //Ma intorc dupa celalalt
-            break;
+                sleep(250);
+                navigateLeft(170);
+                strafeForward(14);
+                takeSkyStone();
+                sleep(100);
+                strafeBackward(15);
+                navigateRight(170);
+                leaveSkyStone();
+                sleep(250);
+                break;
 
             case "center" :
-                strafeBackward(35);
+                strafeBackward(15);
                 navigateRight(140);
+                leaveSkyStone();
+                sleep(250);
                 //Ma intorc dupa celalalt
-            break;
+                navigateLeft(190);
+                sleep(50);
+                strafeForward(14);
+                takeSkyStone();
+                sleep(100);
+                strafeBackward(15);
+                navigateRight(210);
+                leaveSkyStone();
+                sleep(250);
+                break;
         }
 
     }
