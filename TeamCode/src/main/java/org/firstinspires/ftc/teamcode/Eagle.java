@@ -53,6 +53,12 @@ public class Eagle {
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
     private static final double ARM_SPEED = 0.0055;
+
+    private static final double liftSpeed = 0.25d;
+    private static final double LIFT_MAX_SPEED = 1.0d;
+    private static final double LIFT_MIN_SPEED = -1.0d;
+
+    private double liftPower = 0.0d;
     private double servoPosition = ARM_HOME;
 
     //TensorFlow
@@ -178,12 +184,14 @@ public class Eagle {
 
     public void moveLift(boolean power1, boolean power2) {
         if(power1) {
-            motorLift.setPower(1);
+            liftPower += liftSpeed;
         } else if(power2) {
-            motorLift.setPower(-0.75);
+            liftPower -= liftSpeed;
         } else {
-            motorLift.setPower(0.0);
+            liftPower = 0.0d;
         }
+        liftPower = Range.clip(liftPower, LIFT_MIN_SPEED, LIFT_MAX_SPEED);
+        motorLift.setPower(liftPower);
     }
 
     public void intake(boolean power1, boolean power2) {
