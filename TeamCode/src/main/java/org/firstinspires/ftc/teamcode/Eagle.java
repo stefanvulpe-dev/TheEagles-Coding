@@ -44,17 +44,19 @@ public class Eagle {
 
     private Servo servoPlateRight;
     private Servo servoPlateLeft;
+
     private CRServo servoTeamMarker;
+    private CRServo servoParking;
 
     private HardwareMap hwMap;
 
     private static final int MOTOR_TICK_COUNTS = 1440;
-    private static final double ARM_MAX_RANGE = 0.73d;
+    private static final double ARM_MAX_RANGE = 0.78d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
-    private static final double ARM_SPEED = 0.0055;
+    private static final double ARM_SPEED = 0.045;
 
-    private static final double liftSpeed = 0.25d;
+    private static final double liftSpeed = 0.30d;
     private static final double LIFT_MAX_SPEED = 1.0d;
     private static final double LIFT_MIN_SPEED = -1.0d;
 
@@ -106,6 +108,7 @@ public class Eagle {
         servoPlateLeft = hwMap.get(Servo.class, "servoPlateLeft");
 
         servoTeamMarker = hwMap.get(CRServo.class, "servoTeamMarker");
+        servoParking = hwMap.get(CRServo.class, "servoParking");
 
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -129,6 +132,7 @@ public class Eagle {
         servoPlateLeft.setDirection(Servo.Direction.REVERSE);
 
         servoTeamMarker.setDirection(CRServo.Direction.FORWARD);
+        servoParking.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Set Mode
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -192,7 +196,7 @@ public class Eagle {
         }
         liftPower = Range.clip(liftPower, LIFT_MIN_SPEED, LIFT_MAX_SPEED);
         motorLift.setPower(liftPower);
-        sleep(250);
+        sleep(50);
     }
 
     public void intake(boolean power1, boolean power2) {
@@ -253,6 +257,16 @@ public class Eagle {
             servoTeamMarker.setPower(-0.4);
         } else {
             servoTeamMarker.setPower(0);
+        }
+    }
+
+    public void actionServoParking(boolean power1, boolean power2) {
+        if(power1) {
+            servoParking.setPower(1.0);
+        } else if(power2) {
+            servoParking.setPower(-1.0);
+        } else {
+            servoParking.setPower(0.0);
         }
     }
 
@@ -428,10 +442,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(target);
 
-        leftFrontDrive.setPower(-0.65);
-        leftBackDrive.setPower(-0.65);
-        rightFrontDrive.setPower(0.65);
-        rightBackDrive.setPower(0.65);
+        leftFrontDrive.setPower(-0.55);
+        leftBackDrive.setPower(-0.55);
+        rightFrontDrive.setPower(0.55);
+        rightBackDrive.setPower(0.55);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -465,10 +479,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(-target);
         rightBackDrive.setTargetPosition(-target);
 
-        leftFrontDrive.setPower(0.65);
-        leftBackDrive.setPower(0.65);
-        rightFrontDrive.setPower(0.65);
-        rightBackDrive.setPower(0.65);
+        leftFrontDrive.setPower(0.55);
+        leftBackDrive.setPower(0.55);
+        rightFrontDrive.setPower(0.55);
+        rightBackDrive.setPower(0.55);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -495,7 +509,7 @@ public class Eagle {
     public void takeSkyStone() throws InterruptedException {
         servoBlue.setPosition(0.48);
         sleep(500);
-        servoBlueClaw.setPosition(0.53);
+        servoBlueClaw.setPosition(0.55);
         sleep(250);
         servoBlue.setPosition(ARM_HOME);
 
@@ -564,7 +578,8 @@ public class Eagle {
 
         if(!found) {
             //Position Left
-            moveLeft(12);
+            moveLeft(5);
+            sleep(100);
             strafeForward(15);
             takeSkyStone();
             position = "left";
@@ -574,17 +589,20 @@ public class Eagle {
 
         switch (position) {
             case "left" :
-                strafeBackward(15);
-                navigateRight(150);
+                strafeBackward(12);
+                sleep(100);
+                navigateRight(140);
                 leaveSkyStone();
                 sleep(250);
                 //Ma intorc dupa celalalt
-                navigateLeft(210);
-                strafeForward(14);
+                navigateLeft(192);
+                sleep(100);
+                strafeForward(10);
                 takeSkyStone();
                 sleep(250);
                 strafeBackward(15);
-                navigateRight(215);
+                sleep(100);
+                navigateRight(192);
                 leaveSkyStone();
                 sleep(250);
                 break;

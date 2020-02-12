@@ -13,7 +13,7 @@ public class Manual extends LinearOpMode {
     private Eagle eagle = new Eagle();
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -37,8 +37,9 @@ public class Manual extends LinearOpMode {
             eagle.intake(gamepad1.right_bumper, gamepad1.left_bumper);
             eagle.moveArm(gamepad2.right_bumper, gamepad2.left_bumper);
             eagle.actionServoClaw(gamepad2.a, gamepad2.y);
-            eagle.actionServoPlate(gamepad2.x, gamepad2.b);
-            //eagle.actionServoTeamMarker(gamepad2.x,gamepad2.b);
+            //eagle.actionServoPlate(gamepad2.x, gamepad2.b);
+            eagle.actionServoTeamMarker(gamepad2.x,gamepad2.b);
+            eagle.actionServoParking(gamepad1.a, gamepad1.y);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
