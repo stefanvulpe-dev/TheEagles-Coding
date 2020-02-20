@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -50,13 +49,13 @@ public class Eagle {
 
     private HardwareMap hwMap;
 
-    private static final int MOTOR_TICK_COUNTS = 1440;
+    private static final int MOTOR_TICK_COUNTS = 1120;
     private static final double ARM_MAX_RANGE = 0.78d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
     private static final double ARM_SPEED = 0.045;
 
-    private static final double liftSpeed = 0.30d;
+    private static final double liftSpeed = 0.25d;
     private static final double LIFT_MAX_SPEED = 1.0d;
     private static final double LIFT_MIN_SPEED = -1.0d;
 
