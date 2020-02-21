@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -46,6 +48,8 @@ public class Eagle {
 
     private CRServo servoTeamMarker;
     private CRServo servoParking;
+
+    private DistanceSensor sensorRange;
 
     private HardwareMap hwMap;
 
@@ -108,6 +112,8 @@ public class Eagle {
 
         servoTeamMarker = hwMap.get(CRServo.class, "servoTeamMarker");
         servoParking = hwMap.get(CRServo.class, "servoParking");
+
+        sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
 
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -308,6 +314,30 @@ public class Eagle {
         rightBackDrive.setPower(0.0);
 
 
+    }
+
+    private void moveForward() {
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setPower(0.35);
+        leftBackDrive.setPower(-0.35);
+        rightFrontDrive.setPower(0.35);
+        rightBackDrive.setPower(-0.35);
+    }
+
+    private void stop() {
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
 
     public void strafeBackward(double distance) {
@@ -546,7 +576,7 @@ public class Eagle {
                         int skyStoneX = -1;
 
                         for (Recognition recognition : updatedRecognitions) {
-                            if (recognition.getLabel().equals("SkyStone")) {
+                            if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
                                 skyStoneX = (int) recognition.getLeft();
                             }  else {
                                 stoneX = (int) recognition.getLeft();
@@ -557,14 +587,20 @@ public class Eagle {
                             if (skyStoneX < stoneX) {
                                 //Position center
                                 //moveRight(1);
-                                strafeForward(15);
+                                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                                    moveForward();
+                                }
+                                stop();
                                 takeSkyStone();
                                 found = true;
                                 position = "center";
                             } else {
                                 //Position right
                                 moveRight(18);
-                                strafeForward(15);
+                                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                                    moveForward();
+                                }
+                                stop();
                                 takeSkyStone();
                                 found = true;
                                 position = "right";
@@ -579,7 +615,10 @@ public class Eagle {
             //Position Left
             moveLeft(5);
             sleep(100);
-            strafeForward(15);
+            while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                moveForward();
+            }
+            stop();
             takeSkyStone();
             position = "left";
         }
@@ -596,7 +635,10 @@ public class Eagle {
                 //Ma intorc dupa celalalt
                 navigateLeft(192);
                 sleep(100);
-                strafeForward(10);
+                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                    moveForward();
+                }
+                stop();
                 takeSkyStone();
                 sleep(250);
                 strafeBackward(15);
@@ -613,7 +655,10 @@ public class Eagle {
                 //Ma intorc dupa celalalt
                 sleep(250);
                 navigateLeft(170);
-                strafeForward(14);
+                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                    moveForward();
+                }
+                stop();
                 takeSkyStone();
                 sleep(100);
                 strafeBackward(15);
@@ -630,7 +675,10 @@ public class Eagle {
                 //Ma intorc dupa celalalt
                 navigateLeft(190);
                 sleep(50);
-                strafeForward(14);
+                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                    moveForward();
+                }
+                stop();
                 takeSkyStone();
                 sleep(100);
                 strafeBackward(15);
