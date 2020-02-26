@@ -587,8 +587,9 @@ public class Eagle {
                             if (skyStoneX < stoneX) {
                                 //Position center
                                 //moveRight(1);
+                                moveForward();
                                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
-                                    moveForward();
+                                    //wait
                                 }
                                 stop();
                                 takeSkyStone();
@@ -597,8 +598,9 @@ public class Eagle {
                             } else {
                                 //Position right
                                 moveRight(18);
+                                moveForward();
                                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
-                                    moveForward();
+                                    //wait
                                 }
                                 stop();
                                 takeSkyStone();
@@ -615,8 +617,9 @@ public class Eagle {
             //Position Left
             moveLeft(5);
             sleep(100);
+            moveForward();
             while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
-                moveForward();
+                //wait
             }
             stop();
             takeSkyStone();
@@ -635,8 +638,9 @@ public class Eagle {
                 //Ma intorc dupa celalalt
                 navigateLeft(192);
                 sleep(100);
+                moveForward();
                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
-                    moveForward();
+                    //wait
                 }
                 stop();
                 takeSkyStone();
@@ -655,8 +659,10 @@ public class Eagle {
                 //Ma intorc dupa celalalt
                 sleep(250);
                 navigateLeft(170);
+                sleep(50);
+                moveForward();
                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
-                    moveForward();
+                    //wait
                 }
                 stop();
                 takeSkyStone();
@@ -675,8 +681,9 @@ public class Eagle {
                 //Ma intorc dupa celalalt
                 navigateLeft(190);
                 sleep(50);
+                moveForward();
                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
-                    moveForward();
+                    //wait
                 }
                 stop();
                 takeSkyStone();
