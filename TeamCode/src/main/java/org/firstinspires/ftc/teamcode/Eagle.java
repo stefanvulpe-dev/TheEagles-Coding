@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -41,7 +42,9 @@ public class Eagle {
     private Servo servoClaw;
 
     private Servo servoBlue;
+    private Servo servoRed;
     private Servo servoBlueClaw;
+    private Servo servoRedClaw;
 
     private Servo servoPlateRight;
     private Servo servoPlateLeft;
@@ -50,14 +53,15 @@ public class Eagle {
     private CRServo servoParking;
 
     private DistanceSensor sensorRange;
+    private DigitalChannel digitalTouch;
 
     private HardwareMap hwMap;
 
     private static final int MOTOR_TICK_COUNTS = 1120;
-    private static final double ARM_MAX_RANGE = 0.78d;
+    private static final double ARM_MAX_RANGE = 0.8d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
-    private static final double ARM_SPEED = 0.045;
+    private static final double ARM_SPEED = 0.08;
 
     private static final double liftSpeed = 0.25d;
     private static final double LIFT_MAX_SPEED = 1.0d;
@@ -105,7 +109,10 @@ public class Eagle {
         servoClaw = hwMap.get(Servo.class, "servoClaw");
 
         servoBlue = hwMap.get(Servo.class, "servoBlue");
+        servoRed = hwMap.get(Servo.class, "servoRed");
+
         servoBlueClaw = hwMap.get(Servo.class, "servoBlueClaw");
+        servoRedClaw = hwMap.get(Servo.class, "servoRedClaw");
 
         servoPlateRight = hwMap.get(Servo.class, "servoPlateRight");
         servoPlateLeft = hwMap.get(Servo.class, "servoPlateLeft");
@@ -113,7 +120,11 @@ public class Eagle {
         servoTeamMarker = hwMap.get(CRServo.class, "servoTeamMarker");
         servoParking = hwMap.get(CRServo.class, "servoParking");
 
+        //Senzori
         sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
+        digitalTouch = hwMap.get(DigitalChannel.class, "sensor_digital");
+
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
         //Set Direction
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -130,11 +141,14 @@ public class Eagle {
         servoRight.setDirection(Servo.Direction.FORWARD);
         servoClaw.setDirection(Servo.Direction.FORWARD);
 
-        servoBlue.setDirection(Servo.Direction.REVERSE);
-        servoBlueClaw.setDirection(Servo.Direction.REVERSE);
+        servoBlue.setDirection(Servo.Direction.FORWARD);
+        servoRed.setDirection(Servo.Direction.REVERSE);
 
-        servoPlateRight.setDirection(Servo.Direction.FORWARD);
-        servoPlateLeft.setDirection(Servo.Direction.REVERSE);
+        servoBlueClaw.setDirection(Servo.Direction.FORWARD);
+        servoRedClaw.setDirection(Servo.Direction.REVERSE);
+
+        servoPlateRight.setDirection(Servo.Direction.REVERSE);
+        servoPlateLeft.setDirection(Servo.Direction.FORWARD);
 
         servoTeamMarker.setDirection(CRServo.Direction.FORWARD);
         servoParking.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -152,9 +166,11 @@ public class Eagle {
         servoRight.setPosition(ARM_HOME);
         servoClaw.setPosition(ARM_HOME);
         servoBlue.setPosition(ARM_HOME);
+        servoRed.setPosition(ARM_HOME);
+        servoBlueClaw.setPosition(ARM_HOME);
+        servoRedClaw.setPosition(ARM_HOME);
         servoPlateRight.setPosition(ARM_HOME);
         servoPlateLeft.setPosition(ARM_HOME);
-        servoBlueClaw.setPosition(ARM_HOME);
 
     }
 
@@ -199,6 +215,11 @@ public class Eagle {
         } else {
             liftPower = 0.0d;
         }
+        //Switch apasat
+        if(!digitalTouch.getState()) {
+            liftPower = -0.10d;
+            sleep(250);
+        }
         liftPower = Range.clip(liftPower, LIFT_MIN_SPEED, LIFT_MAX_SPEED);
         motorLift.setPower(liftPower);
         sleep(50);
@@ -232,6 +253,8 @@ public class Eagle {
         servoRight.setPosition(servoPosition);
     }
 
+    /* Servo-uri Manual */
+
     public void actionServoClaw(boolean power1, boolean power2) {
         if(power1) {
             servoClaw.setPosition(0.32);
@@ -242,11 +265,11 @@ public class Eagle {
         }
     }
 
-    public void actionServoPlate(boolean power1, boolean power2) {
-        if(power1) {
+    public void actionServoPlate(double power1, double power2) {
+        if(power1 > 0.0d) {
             servoPlateRight.setPosition(1.0);
             servoPlateLeft.setPosition(1.0);
-        } else if(power2) {
+        } else if(power2 > 0.0d) {
             servoPlateRight.setPosition(0.0);
             servoPlateLeft.setPosition(0.0);
         } else {
@@ -257,9 +280,9 @@ public class Eagle {
 
     public void actionServoTeamMarker(boolean power1, boolean power2) {
         if(power1) {
-            servoTeamMarker.setPower(0.4);
+            servoTeamMarker.setPower(0.25);
         } else if(power2) {
-            servoTeamMarker.setPower(-0.4);
+            servoTeamMarker.setPower(-0.25);
         } else {
             servoTeamMarker.setPower(0);
         }
@@ -275,7 +298,7 @@ public class Eagle {
         }
     }
 
-    //Functii autonom
+    /* Motoare autonom */
 
     public void strafeForward(double distance) {
         //Reset encoders
@@ -530,29 +553,208 @@ public class Eagle {
 
     }
 
-    public void goToPos() throws InterruptedException {
-        servoBlueClaw.setPosition(0.35);
+    /* Servo-uri Sample */
+
+    public void goToPosRed() throws InterruptedException {
+        servoRedClaw.setPosition(0.25);
         sleep(250);
     }
 
-    public void takeSkyStone() throws InterruptedException {
+    public void takeSkyStoneRed() throws InterruptedException {
+        goToPosRed();
+        servoRed.setPosition(0.48);
+        sleep(500);
+        servoRedClaw.setPosition(0.42);
+        sleep(250);
+        servoRed.setPosition(ARM_HOME);
+
+    }
+
+    private void leaveSkyStoneRed() throws InterruptedException {
+        servoRed.setPosition(0.48);
+        sleep(250);
+        servoRedClaw.setPosition(0.25);
+        sleep(250);
+        servoRed.setPosition(ARM_HOME);
+
+    }
+
+    private void leaveSkyStoneBlue() throws InterruptedException {
+        goToPosBlue();
+        servoBlue.setPosition(0.48);
+        sleep(250);
+        servoBlueClaw.setPosition(0.25);
+        sleep(250);
+        servoBlue.setPosition(ARM_HOME);
+
+    }
+
+    public void goToPosBlue() throws InterruptedException {
+        servoBlueClaw.setPosition(0.25);
+        sleep(250);
+    }
+
+    public void takeSkyStoneBlue() throws InterruptedException {
         servoBlue.setPosition(0.48);
         sleep(500);
-        servoBlueClaw.setPosition(0.55);
+        servoBlueClaw.setPosition(0.42);
         sleep(250);
         servoBlue.setPosition(ARM_HOME);
 
     }
 
+    public double getDistance() {
+        return sensorRange.getDistance(DistanceUnit.CM);
+    }
 
-    private void leaveSkyStone() throws InterruptedException {
-        servoBlue.setPosition(0.48);
-        sleep(250);
-        servoBlueClaw.setPosition(0.35);
-        sleep(250);
-        servoBlue.setPosition(ARM_HOME);
+    /* Make Sample Red */
+
+    public void makeSampleRed() throws InterruptedException {
+
+        boolean found = false;
+
+        String position = null;
+
+        for(int i = 1; i <= 50 && !found; i ++) {
+
+            sleep(10);
+
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
+                if (updatedRecognitions != null) {
+
+                    if (updatedRecognitions.size() == 2) {
+                        int stoneX = -1;
+                        int skyStoneX = -1;
+
+                        for (Recognition recognition : updatedRecognitions) {
+                            if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
+                                skyStoneX = (int) recognition.getLeft();
+                            }  else {
+                                stoneX = (int) recognition.getLeft();
+                            }
+                        }
+
+                        if (skyStoneX != -1 && stoneX != -1) {
+                            if (skyStoneX < stoneX) {
+                                //Position center
+                                //moveRight(1);
+                                moveForward();
+                                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                                    //wait
+                                }
+                                stop();
+                                //wait
+                                sleep(100);
+                                takeSkyStoneRed();
+                                found = true;
+                                position = "center";
+                            } else {
+                                //Position right
+                                moveForward();
+                                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                                    //wait
+                                }
+                                stop();
+                                //wait
+                                sleep(100);
+                                moveRight(18);
+                                takeSkyStoneRed();
+                                found = true;
+                                position = "right";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(!found) {
+            //Position Left
+            moveForward();
+            while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                //wait
+            }
+            stop();
+            sleep(100);
+            moveLeft(5);
+            takeSkyStoneRed();
+            position = "left";
+        }
+
+        sleep(500);
+
+        switch (position) {
+            case "left" :
+                strafeBackward(15);
+                navigateRight(140);
+                leaveSkyStoneRed();
+                sleep(250);
+                //Ma intorc dupa celalalt
+                navigateLeft(190);
+                moveForward();
+                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                    //wait
+                }
+                stop();
+                sleep(100);
+                takeSkyStoneRed();
+                sleep(250);
+                strafeBackward(15);
+                navigateRight(195);
+                leaveSkyStoneRed();
+                sleep(250);
+                break;
+
+            case "right" :
+                strafeBackward(15);
+                navigateRight(110);
+                leaveSkyStoneRed();
+                //Ma intorc dupa celalalt
+                sleep(250);
+                navigateLeft(170);
+                moveForward();
+                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                    //wait
+                }
+                stop();
+                sleep(100);
+                takeSkyStoneRed();
+                sleep(100);
+                strafeBackward(15);
+                navigateRight(175);
+                leaveSkyStoneRed();
+                sleep(250);
+                break;
+
+            case "center" :
+                strafeBackward(15);
+                navigateRight(130);
+                leaveSkyStoneRed();
+                sleep(250);
+                //Ma intorc dupa celalalt
+                navigateLeft(190);
+                moveForward();
+                while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+                    //wait
+                }
+                stop();
+                sleep(100);
+                takeSkyStoneRed();
+                sleep(100);
+                strafeBackward(15);
+                navigateRight(195);
+                leaveSkyStoneRed();
+                sleep(250);
+                break;
+        }
 
     }
+
+    /* Make Sample Blue */
 
     public void makeSampleBlue() throws InterruptedException {
 
@@ -592,18 +794,22 @@ public class Eagle {
                                     //wait
                                 }
                                 stop();
-                                takeSkyStone();
+                                //wait
+                                sleep(100);
+                                takeSkyStoneBlue();
                                 found = true;
                                 position = "center";
                             } else {
                                 //Position right
-                                moveRight(18);
                                 moveForward();
                                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
                                     //wait
                                 }
                                 stop();
-                                takeSkyStone();
+                                //wait
+                                sleep(100);
+                                moveRight(18);
+                                takeSkyStoneBlue();
                                 found = true;
                                 position = "right";
                             }
@@ -615,14 +821,14 @@ public class Eagle {
 
         if(!found) {
             //Position Left
-            moveLeft(5);
-            sleep(100);
             moveForward();
             while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
                 //wait
             }
             stop();
-            takeSkyStone();
+            sleep(100);
+            moveLeft(5);
+            takeSkyStoneRed();
             position = "left";
         }
 
@@ -630,67 +836,65 @@ public class Eagle {
 
         switch (position) {
             case "left" :
-                strafeBackward(12);
-                sleep(100);
-                navigateRight(140);
-                leaveSkyStone();
+                strafeBackward(15);
+                navigateLeft(110);
+                leaveSkyStoneRed();
                 sleep(250);
                 //Ma intorc dupa celalalt
-                navigateLeft(192);
-                sleep(100);
+                navigateRight(170);
                 moveForward();
                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
                     //wait
                 }
                 stop();
-                takeSkyStone();
+                sleep(100);
+                takeSkyStoneRed();
                 sleep(250);
                 strafeBackward(15);
-                sleep(100);
-                navigateRight(192);
-                leaveSkyStone();
+                navigateLeft(175);
+                leaveSkyStoneRed();
                 sleep(250);
                 break;
 
             case "right" :
                 strafeBackward(15);
-                navigateRight(100);
-                leaveSkyStone();
+                navigateLeft(140);
+                leaveSkyStoneRed();
                 //Ma intorc dupa celalalt
                 sleep(250);
-                navigateLeft(170);
-                sleep(50);
+                navigateRight(190);
                 moveForward();
                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
                     //wait
                 }
                 stop();
-                takeSkyStone();
+                sleep(100);
+                takeSkyStoneRed();
                 sleep(100);
                 strafeBackward(15);
-                navigateRight(170);
-                leaveSkyStone();
+                navigateLeft(195);
+                leaveSkyStoneRed();
                 sleep(250);
                 break;
 
             case "center" :
                 strafeBackward(15);
-                navigateRight(140);
-                leaveSkyStone();
+                navigateLeft(130);
+                leaveSkyStoneRed();
                 sleep(250);
                 //Ma intorc dupa celalalt
-                navigateLeft(190);
-                sleep(50);
+                navigateRight(190);
                 moveForward();
                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
                     //wait
                 }
                 stop();
-                takeSkyStone();
+                sleep(100);
+                takeSkyStoneRed();
                 sleep(100);
                 strafeBackward(15);
-                navigateRight(210);
-                leaveSkyStone();
+                navigateLeft(195);
+                leaveSkyStoneRed();
                 sleep(250);
                 break;
         }

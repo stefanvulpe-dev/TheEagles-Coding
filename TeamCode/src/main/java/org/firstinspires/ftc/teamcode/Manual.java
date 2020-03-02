@@ -31,13 +31,12 @@ public class Manual extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
             eagle.manualMove(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
             eagle.moveLift(gamepad2.dpad_up, gamepad2.dpad_down);
             eagle.intake(gamepad1.right_bumper, gamepad1.left_bumper);
             eagle.moveArm(gamepad2.right_bumper, gamepad2.left_bumper);
             eagle.actionServoClaw(gamepad2.a, gamepad2.y);
-            //eagle.actionServoPlate(gamepad2.x, gamepad2.b);
+            eagle.actionServoPlate(gamepad1.right_trigger, gamepad1.left_trigger);
             eagle.actionServoTeamMarker(gamepad2.x,gamepad2.b);
             eagle.actionServoParking(gamepad1.a, gamepad1.y);
             // Show the elapsed game time and wheel power.
