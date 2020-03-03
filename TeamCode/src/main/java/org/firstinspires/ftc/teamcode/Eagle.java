@@ -58,6 +58,8 @@ public class Eagle {
     private HardwareMap hwMap;
 
     private static final int MOTOR_TICK_COUNTS = 1120;
+    private static final double wheelsRatio = 1.5d;
+
     private static final double ARM_MAX_RANGE = 0.8d;
     private static final double ARM_MIN_RANGE = 0.0d;
     private static final double ARM_HOME = 0.0d;
@@ -280,9 +282,9 @@ public class Eagle {
 
     public void actionServoTeamMarker(boolean power1, boolean power2) {
         if(power1) {
-            servoTeamMarker.setPower(0.25);
+            servoTeamMarker.setPower(0.2);
         } else if(power2) {
-            servoTeamMarker.setPower(-0.25);
+            servoTeamMarker.setPower(-0.2);
         } else {
             servoTeamMarker.setPower(0);
         }
@@ -308,7 +310,7 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double circumference = Math.PI * 10;
-        double rotationsNeeded = distance/circumference;
+        double rotationsNeeded = (distance/circumference) / wheelsRatio;
         int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
 
         leftFrontDrive.setTargetPosition(target);
@@ -371,7 +373,7 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double circumference = Math.PI * 10;
-        double rotationsNeeded = distance/circumference;
+        double rotationsNeeded = (distance/circumference) / wheelsRatio;
         int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
 
         leftFrontDrive.setTargetPosition(target);
@@ -410,7 +412,7 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double circumference = Math.PI * 10;
-        double rotationsNeeded = distance/circumference;
+        double rotationsNeeded = (distance/circumference) / wheelsRatio;
         int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
 
         leftFrontDrive.setTargetPosition(target);
@@ -448,7 +450,7 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double circumference = Math.PI * 10;
-        double rotationsNeeded = distance/circumference;
+        double rotationsNeeded = (distance/circumference) / wheelsRatio;
         int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
 
         leftFrontDrive.setTargetPosition(target);
@@ -486,7 +488,7 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double circumference = Math.PI * 10;
-        double rotationsNeeded = distance/circumference;
+        double rotationsNeeded = (distance/circumference) / wheelsRatio;
         int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
 
         leftFrontDrive.setTargetPosition(target);
@@ -523,7 +525,7 @@ public class Eagle {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double circumference = Math.PI * 10;
-        double rotationsNeeded = distance/circumference;
+        double rotationsNeeded = (distance/circumference) / wheelsRatio;
         int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
 
         leftFrontDrive.setTargetPosition(target);
@@ -551,6 +553,43 @@ public class Eagle {
         rightFrontDrive.setPower(0.0);
         rightBackDrive.setPower(0.0);
 
+    }
+
+    public void turn90Right(double distance) {
+        //Reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double circumference = Math.PI * 10;
+        double rotationsNeeded = (distance/circumference) / wheelsRatio;
+        int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
+
+        leftFrontDrive.setTargetPosition(target);
+        leftBackDrive.setTargetPosition(target);
+        rightFrontDrive.setTargetPosition(target);
+        rightBackDrive.setTargetPosition(target);
+
+        leftFrontDrive.setPower(-0.35);
+        leftBackDrive.setPower(-0.35);
+        rightFrontDrive.setPower(-0.35);
+        rightBackDrive.setPower(-0.35);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        while(leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+            //wait
+        }
+
+        leftFrontDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
+        rightFrontDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
     }
 
     /* Servo-uri Sample */
@@ -899,6 +938,37 @@ public class Eagle {
                 break;
         }
 
+    }
+
+    /* Platforma */
+
+    private void catchPlate() throws InterruptedException {
+        servoPlateLeft.setPosition(1.0);
+        servoPlateRight.setPosition(1.0);
+        sleep(250);
+    }
+
+    private void releasePlate() throws InterruptedException {
+        servoPlateLeft.setPosition(0);
+        servoPlateRight.setPosition(0);
+        sleep(250);
+    }
+
+    public void repositionBlue() throws InterruptedException {
+        //Navigare
+        moveLeft(75);
+
+        catchPlate();
+
+        moveRight(60);
+
+        turn90Right(35.5);
+
+        releasePlate();
+
+        strafeForward(50);
+
+        //Park
     }
 
     private void initVuforia(HardwareMap bhwMap) {
