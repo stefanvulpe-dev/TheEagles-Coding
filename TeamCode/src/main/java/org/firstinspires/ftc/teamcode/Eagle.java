@@ -318,10 +318,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(target);
 
-        leftFrontDrive.setPower(0.35);
-        leftBackDrive.setPower(-0.35);
-        rightFrontDrive.setPower(0.35);
-        rightBackDrive.setPower(-0.35);
+        leftFrontDrive.setPower(-0.18);
+        leftBackDrive.setPower(0.06);
+        rightFrontDrive.setPower(-0.3);
+        rightBackDrive.setPower(0.10);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -411,19 +411,19 @@ public class Eagle {
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        double circumference = Math.PI * 10;
-        double rotationsNeeded = (distance/circumference) / wheelsRatio;
+        double circumference = Math.PI * 10.0d;
+        double rotationsNeeded = distance/circumference;
         int target = (int)(MOTOR_TICK_COUNTS * rotationsNeeded);
 
-        leftFrontDrive.setTargetPosition(target);
-        leftBackDrive.setTargetPosition(target);
-        rightFrontDrive.setTargetPosition(-target);
-        rightBackDrive.setTargetPosition(-target);
+        leftFrontDrive.setTargetPosition(-target);
+        leftBackDrive.setTargetPosition(-target);
+        rightFrontDrive.setTargetPosition(target);
+        rightBackDrive.setTargetPosition(target);
 
-        leftFrontDrive.setPower(0.35);
-        leftBackDrive.setPower(0.35);
-        rightFrontDrive.setPower(0.35);
-        rightBackDrive.setPower(0.35);
+        leftFrontDrive.setPower(0.30);
+        leftBackDrive.setPower(0.07);
+        rightFrontDrive.setPower(0.29);
+        rightBackDrive.setPower(0.06);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -455,13 +455,13 @@ public class Eagle {
 
         leftFrontDrive.setTargetPosition(target);
         leftBackDrive.setTargetPosition(target);
-        rightFrontDrive.setTargetPosition(target);
-        rightBackDrive.setTargetPosition(target);
+        rightFrontDrive.setTargetPosition(-target);
+        rightBackDrive.setTargetPosition(-target);
 
-        leftFrontDrive.setPower(-0.35);
-        leftBackDrive.setPower(-0.35);
-        rightFrontDrive.setPower(0.35);
-        rightBackDrive.setPower(0.35);
+        leftFrontDrive.setPower(0.30);
+        leftBackDrive.setPower(0.07);
+        rightFrontDrive.setPower(0.28);
+        rightBackDrive.setPower(0.05);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -568,13 +568,13 @@ public class Eagle {
 
         leftFrontDrive.setTargetPosition(target);
         leftBackDrive.setTargetPosition(target);
-        rightFrontDrive.setTargetPosition(target);
-        rightBackDrive.setTargetPosition(target);
+        rightFrontDrive.setTargetPosition(-target);
+        rightBackDrive.setTargetPosition(-target);
 
-        leftFrontDrive.setPower(-0.35);
-        leftBackDrive.setPower(-0.35);
-        rightFrontDrive.setPower(-0.35);
-        rightBackDrive.setPower(-0.35);
+        leftFrontDrive.setPower(0.45);
+        leftBackDrive.setPower(0.45);
+        rightFrontDrive.setPower(-0.45);
+        rightBackDrive.setPower(-0.45);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -945,30 +945,35 @@ public class Eagle {
     private void catchPlate() throws InterruptedException {
         servoPlateLeft.setPosition(1.0);
         servoPlateRight.setPosition(1.0);
-        sleep(250);
+        sleep(500);
     }
 
     private void releasePlate() throws InterruptedException {
         servoPlateLeft.setPosition(0);
         servoPlateRight.setPosition(0);
-        sleep(250);
+        sleep(500);
     }
 
     public void repositionBlue() throws InterruptedException {
         //Navigare
-        moveLeft(75);
+        moveLeft(48);
 
         catchPlate();
 
-        moveRight(60);
+        moveRight(55);
 
-        turn90Right(35.5);
+        turn90Right(65);
 
         releasePlate();
 
-        strafeForward(50);
+        moveLeft(8);
 
         //Park
+        moveRight(8);
+
+        strafeForward(41);
+
+        moveRight(88);
     }
 
     private void initVuforia(HardwareMap bhwMap) {

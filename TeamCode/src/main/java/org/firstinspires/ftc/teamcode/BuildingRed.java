@@ -23,7 +23,7 @@ public class BuildingRed extends LinearOpMode {
         }
 
         if(opModeIsActive()) {
-
+            eagle.strafeForward(20);
             eagle.repositionBlue();
 
         }
