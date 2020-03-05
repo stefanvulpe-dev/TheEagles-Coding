@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="BuildingRed", group="Linear Opmode")
+@Autonomous(name="BuildingBlue", group="Linear Opmode")
 
-public class BuildingRed extends LinearOpMode {
+public class BuildingBlue extends LinearOpMode {
 
     private Eagle eagle = new Eagle();
 
@@ -24,8 +24,8 @@ public class BuildingRed extends LinearOpMode {
 
         if(opModeIsActive()) {
 
-            eagle.strafeForward(15);
-            eagle.repositionRed();
+            eagle.strafeBackward(15);
+            eagle.repositionBlue();
 
         }
 
