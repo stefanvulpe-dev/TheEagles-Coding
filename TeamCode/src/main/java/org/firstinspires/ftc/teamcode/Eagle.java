@@ -197,10 +197,10 @@ public class Eagle {
         double rightX = Turn;
 
         //double vX represents the velocities sent to each motor
-        final double v1 = (r * Math.cos(robotAngle)) + rightX;
-        final double v2 = (r * Math.sin(robotAngle)) - rightX;
-        final double v3 = (r * Math.sin(robotAngle)) + rightX;
-        final double v4 = (r * Math.cos(robotAngle)) - rightX;
+        double v1 = Range.clip(r * Math.cos(robotAngle) + rightX, -1.0, 1.0);
+        double v2 = Range.clip(r * Math.sin(robotAngle) - rightX, -1.0, 1.0);
+        double v3 = Range.clip(r * Math.sin(robotAngle) + rightX, -1.0, 1.0);
+        double v4 = Range.clip(r * Math.cos(robotAngle) - rightX, -1.0, 1.0);
 
         leftFrontDrive.setPower(v1);
         rightFrontDrive.setPower(v2);
@@ -209,33 +209,25 @@ public class Eagle {
 
     }
 
-    public void constructionMode(boolean forward, boolean backward, boolean left, boolean right) {
-        if(forward) {
-            leftFrontDrive.setPower(0.35);
-            rightFrontDrive.setPower(0.35);
-            leftBackDrive.setPower(0.35);
-            rightBackDrive.setPower(0.35);
-        } else if(backward) {
-            leftFrontDrive.setPower(-0.35);
-            rightFrontDrive.setPower(-0.35);
-            leftBackDrive.setPower(-0.35);
-            rightBackDrive.setPower(-0.35);
-        } else if(left) {
-            leftFrontDrive.setPower(-0.35);
-            rightFrontDrive.setPower(0.35);
-            leftBackDrive.setPower(0.35);
-            rightBackDrive.setPower(-0.35);
-        } else if(right) {
-            leftFrontDrive.setPower(0.35);
-            rightFrontDrive.setPower(-0.35);
-            leftBackDrive.setPower(-0.35);
-            rightBackDrive.setPower(0.35);
-        } else {
-            leftFrontDrive.setPower(0.0);
-            rightFrontDrive.setPower(0.0);
-            leftBackDrive.setPower(0.0);
-            rightBackDrive.setPower(0.0);
-        }
+    public void constructionMode(double Strafe, double Forward, double Turn) {
+        double r = Math.hypot(Strafe, Forward);
+
+        //returns point from +X axis to point (forward, strafe)
+        double robotAngle = Math.atan2(Forward, Strafe) - Math.PI / 4;
+
+        //Quantity to turn by (turn)
+        double rightX = Turn;
+
+        //double vX represents the velocities sent to each motor
+        double v1 = Range.clip(r * Math.cos(robotAngle) + rightX, -0.4, 0.4);
+        double v2 = Range.clip(r * Math.sin(robotAngle) - rightX, -0.4, 0.4);
+        double v3 = Range.clip(r * Math.sin(robotAngle) + rightX, -0.4, 0.4);
+        double v4 = Range.clip(r * Math.cos(robotAngle) - rightX, -0.4, 0.4);
+
+        leftFrontDrive.setPower(v1);
+        rightFrontDrive.setPower(v2);
+        leftBackDrive.setPower(v3);
+        rightBackDrive.setPower(v4);
     }
 
     public void moveLift(boolean power1, boolean power2) throws InterruptedException {
@@ -298,8 +290,8 @@ public class Eagle {
 
     public void actionServoPlate(double power1, double power2) {
         if(power1 > 0.0d) {
-            servoPlateRight.setPosition(1.0);
-            servoPlateLeft.setPosition(1.0);
+            servoPlateRight.setPosition(0.62);
+            servoPlateLeft.setPosition(0.62);
         } else if(power2 > 0.0d) {
             servoPlateRight.setPosition(0.0);
             servoPlateLeft.setPosition(0.0);
@@ -331,53 +323,6 @@ public class Eagle {
 
     /* Motoare autonom */
 
-    public void activateEncoders() {
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-    }
-
-//    public void test(boolean val1) {
-//
-//        double quarterTurn = 1440 / 4;
-//        int targetPosition = 0;
-//        if(val1) {
-//            targetPosition += (int)quarterTurn;
-//        }
-//
-//        leftFrontDrive.setTargetPosition(targetPosition);
-//        rightFrontDrive.setTargetPosition(targetPosition);
-//        leftBackDrive.setTargetPosition(targetPosition);
-//        rightBackDrive.setTargetPosition(targetPosition);
-//
-//        leftFrontDrive.setPower(0.25);
-//        leftBackDrive.setPower(0.25);
-//        rightFrontDrive.setPower(0.25);
-//        rightBackDrive.setPower(0.25);
-//
-//        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        while(leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
-//            //wait
-//        }
-//
-//        leftFrontDrive.setPower(0.0);
-//        leftBackDrive.setPower(0.0);
-//        rightFrontDrive.setPower(0.0);
-//        rightBackDrive.setPower(0.0);
-//
-//    }
-
     public void strafeForward(double distance) {
         //Reset encoders
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -394,10 +339,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(-target);
         rightBackDrive.setTargetPosition(target);
 
-        leftFrontDrive.setPower(0.45);
-        leftBackDrive.setPower(0.45);
-        rightFrontDrive.setPower(0.45);
-        rightBackDrive.setPower(0.45);
+        leftFrontDrive.setPower(0.5);
+        leftBackDrive.setPower(0.5);
+        rightFrontDrive.setPower(0.5);
+        rightBackDrive.setPower(0.5);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -417,23 +362,23 @@ public class Eagle {
 
     }
 
-    private void moveForward() {
-        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void moveForward() {
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftFrontDrive.setPower(0.35);
-        leftBackDrive.setPower(-0.35);
-        rightFrontDrive.setPower(0.35);
-        rightBackDrive.setPower(-0.35);
+        leftFrontDrive.setPower(-0.5);
+        leftBackDrive.setPower(0.5);
+        rightFrontDrive.setPower(0.5);
+        rightBackDrive.setPower(-0.5);
     }
 
     private void stop() {
-        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         leftFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
@@ -457,10 +402,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(-target);
 
-        leftFrontDrive.setPower(0.45);
-        leftBackDrive.setPower(0.45);
-        rightFrontDrive.setPower(0.45);
-        rightBackDrive.setPower(0.45);
+        leftFrontDrive.setPower(0.5);
+        leftBackDrive.setPower(0.5);
+        rightFrontDrive.setPower(0.5);
+        rightBackDrive.setPower(0.5);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -496,10 +441,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(target);
 
-        leftFrontDrive.setPower(0.45);
-        leftBackDrive.setPower(0.45);
-        rightFrontDrive.setPower(0.45);
-        rightBackDrive.setPower(0.45);
+        leftFrontDrive.setPower(0.5);
+        leftBackDrive.setPower(0.5);
+        rightFrontDrive.setPower(0.5);
+        rightBackDrive.setPower(0.5);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -534,10 +479,10 @@ public class Eagle {
         rightFrontDrive.setTargetPosition(-target);
         rightBackDrive.setTargetPosition(-target);
 
-        leftFrontDrive.setPower(0.45);
-        leftBackDrive.setPower(0.45);
-        rightFrontDrive.setPower(0.45);
-        rightBackDrive.setPower(0.45);
+        leftFrontDrive.setPower(0.5);
+        leftBackDrive.setPower(0.5);
+        rightFrontDrive.setPower(0.5);
+        rightBackDrive.setPower(0.5);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -707,13 +652,8 @@ public class Eagle {
 
     /* Servo-uri Sample */
 
-    public void goToPosRed() throws InterruptedException {
-        servoRedClaw.setPosition(0.25);
-        sleep(250);
-    }
 
     public void takeSkyStoneRed() throws InterruptedException {
-        goToPosRed();
         servoRed.setPosition(0.48);
         sleep(500);
         servoRedClaw.setPosition(0.42);
@@ -732,18 +672,12 @@ public class Eagle {
     }
 
     private void leaveSkyStoneBlue() throws InterruptedException {
-        goToPosBlue();
         servoBlue.setPosition(0.48);
         sleep(250);
         servoBlueClaw.setPosition(0.25);
         sleep(250);
         servoBlue.setPosition(ARM_HOME);
 
-    }
-
-    public void goToPosBlue() throws InterruptedException {
-        servoBlueClaw.setPosition(0.25);
-        sleep(250);
     }
 
     public void takeSkyStoneBlue() throws InterruptedException {
@@ -800,9 +734,9 @@ public class Eagle {
                             if (skyStoneX < stoneX) {
                                 //Position center
                                 //moveRight(1);
-                                moveForward();
                                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
                                     //wait
+                                    moveForward();
                                 }
                                 stop();
                                 //wait
@@ -812,9 +746,9 @@ public class Eagle {
                                 position = "center";
                             } else {
                                 //Position right
-                                moveForward();
                                 while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
                                     //wait
+                                    moveForward();
                                 }
                                 stop();
                                 //wait
@@ -833,11 +767,12 @@ public class Eagle {
         if(!found) {
             //Position Left
             moveForward();
-            while(sensorRange.getDistance(DistanceUnit.CM) > 5) {
+            while(sensorRange.getDistance(DistanceUnit.CM) >= 5) {
                 //wait
+                sleep(30);
             }
             stop();
-            sleep(100);
+            sleep(500);
             moveLeft(5);
             takeSkyStoneRed();
             position = "left";
@@ -1062,8 +997,8 @@ public class Eagle {
     /* Platforma */
 
     private void catchPlate() throws InterruptedException {
-        servoPlateLeft.setPosition(1.0);
-        servoPlateRight.setPosition(1.0);
+        servoPlateLeft.setPosition(0.62);
+        servoPlateRight.setPosition(0.62);
         sleep(500);
     }
 
@@ -1098,6 +1033,37 @@ public class Eagle {
         sleep(250);
 
         moveRight(97);
+    }
+
+    public void repositionRedRuleta() throws InterruptedException {
+        //Navigare
+        moveLeft(52);
+
+        sleep(250);
+
+        catchPlate();
+
+        moveRight(55);
+
+        sleep(250);
+
+        turn90Right(65);
+
+        releasePlate();
+
+        moveLeft(15);
+
+        //Park
+        //Turn 180
+        moveRight(20);
+
+        sleep(250);
+
+        turn90Left(100);
+
+        strafeBackward(38);
+
+        extendRuller();
     }
 
     public void repositionBlue() throws InterruptedException {
@@ -1143,16 +1109,22 @@ public class Eagle {
 
         releasePlate();
 
-        moveLeft(10);
+        moveLeft(20);
 
         //Park
         //Turn 180
-        turn90Right(120);
 
-        strafeBackward(38);
+        moveRight(15);
+
+        sleep(250);
+
+        turn90Right(105);
+
+        strafeForward(38);
 
         extendRuller();
     }
+
 
     private void initVuforia(HardwareMap bhwMap) {
         /*
